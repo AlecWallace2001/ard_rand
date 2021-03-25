@@ -1,6 +1,6 @@
 String start (int a)
 {
-  
+  //This function converts a number between 1 and 31 to a binary string and returns it
   Serial.println(a);
   String binary  ("");
     int mask = 1;
@@ -16,6 +16,7 @@ String start (int a)
  }
 
 int updateRand(){
+  //This function generates the random seed to avoid duplicate sets
   long seed;
   for (int i = 0; i <= 10; i++) {
     seed = seed + (analogRead(0)*analogRead(0));
@@ -26,6 +27,7 @@ int updateRand(){
   return 0;
 }
 
+// Initializing our variables
   String bin1 = start(random(1,30));
   String bin2 = start(random(1,30));
   String bin3 = start(random(1,30));
@@ -88,6 +90,8 @@ int updateRand(){
 
 int cycle ()
 {
+  //This function generates a new set by selecting a new seed, creating new binary values,
+  //then assigning the new values to the array
   updateRand();
   bin1 = start(random(1,30));
   bin2 = start(random(1,30));
@@ -147,6 +151,8 @@ int cycle ()
  };
 
 int iterate_attempt() {
+  //This process handles out 10 button combination. It iterates the array of 10 integers so we progress
+  //through the possibilities from all 0 to all 2 putton presses. 
   int j_var = 0;
   do {
     if (attempt[j_var]==2) {
@@ -162,6 +168,7 @@ int iterate_attempt() {
 }
 
 int state_cycle(char var_state) {
+  //This cycles our state between the different program button presses.
   if(var_state=='a') {
     if(a_state==2) {
       a_state = 0;
@@ -184,6 +191,8 @@ int state_cycle(char var_state) {
 };
 
 int next_state(int* state, int loc) {
+  //This handles the state of our lights, flipping between 1/0 based on what is in the button state
+  //and the light state
   for (int i = 0; i <= 4; i++) {
     if (state[i] + curr_state[i] ==2) {
       curr_state[i] = 0;
@@ -194,6 +203,8 @@ int next_state(int* state, int loc) {
 }
 
 int validation(){
+  //This just compares our currrent state with the anticipated solution. If all values in the current
+  //light state match the solution state, then the valid solution flag is set.
     Serial.print("current: "); 
     Serial.print(curr_state[0]); 
     Serial.print(curr_state[1]); 
@@ -215,9 +226,17 @@ int validation(){
 };
 
 int gen_val_state() {
+  //This is the main function. 
   do {
+    //This will continue running until a valid solution is found. Then the 
+    //function ends and the global variables contain a set of arrays that can solve the puzzle
     do{
+      //This cycles through the 59k combinations to find out if this combination of arrays contains a valid solution.
+      //at the point that a valid solution is found, the function exits. If no solution is found with the current
+      //array set, a fresh array set is generated and tested.
         for (int i = 0; i <= 9; i++) {
+          //This cycles through the attempt array to test to see if it contains a valid combination
+          //using the current arrays
           if (attempt[i]==0) {
             next_state(buttonSeq[a_state],i);
             state_cycle('a');
