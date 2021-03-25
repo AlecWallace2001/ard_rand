@@ -45,7 +45,7 @@ int updateRand(){
   int c_state = 0;
   int valid_sol = 0;
   int curr_state[5] ={0,0,0,0,0};
-  int rotary0Seq[][5] = {
+  int buttonSeq[][5] = {
     {bin1[0]-'0',bin1[1]-'0',bin1[2]-'0',bin1[3]-'0',bin1[4]-'0'},
     {bin2[0]-'0',bin2[1]-'0',bin2[2]-'0',bin2[3]-'0',bin2[4]-'0'},
     {bin3[0]-'0',bin3[1]-'0',bin3[2]-'0',bin3[3]-'0',bin3[4]-'0'}
@@ -98,21 +98,21 @@ int cycle ()
   bin7 = start(random(1,30));
   bin8 = start(random(1,30));
   bin9 = start(random(1,30));
-  rotary0Seq[0][0]= bin1[0]-'0';
-  rotary0Seq[0][1]= bin1[1]-'0';
-  rotary0Seq[0][2]= bin1[2]-'0';
-  rotary0Seq[0][3]= bin1[3]-'0';
-  rotary0Seq[0][4]= bin1[4]-'0';
-  rotary0Seq[1][0]= bin2[0]-'0';
-  rotary0Seq[1][1]= bin2[1]-'0';
-  rotary0Seq[1][2]= bin2[2]-'0';
-  rotary0Seq[1][3]= bin2[3]-'0';
-  rotary0Seq[1][4]= bin2[4]-'0';
-  rotary0Seq[2][0]= bin3[0]-'0';
-  rotary0Seq[2][1]= bin3[1]-'0';
-  rotary0Seq[2][2]= bin3[2]-'0';
-  rotary0Seq[2][3]= bin3[3]-'0';
-  rotary0Seq[2][4]= bin3[4]-'0';
+  buttonSeq[0][0]= bin1[0]-'0';
+  buttonSeq[0][1]= bin1[1]-'0';
+  buttonSeq[0][2]= bin1[2]-'0';
+  buttonSeq[0][3]= bin1[3]-'0';
+  buttonSeq[0][4]= bin1[4]-'0';
+  buttonSeq[1][0]= bin2[0]-'0';
+  buttonSeq[1][1]= bin2[1]-'0';
+  buttonSeq[1][2]= bin2[2]-'0';
+  buttonSeq[1][3]= bin2[3]-'0';
+  buttonSeq[1][4]= bin2[4]-'0';
+  buttonSeq[2][0]= bin3[0]-'0';
+  buttonSeq[2][1]= bin3[1]-'0';
+  buttonSeq[2][2]= bin3[2]-'0';
+  buttonSeq[2][3]= bin3[3]-'0';
+  buttonSeq[2][4]= bin3[4]-'0';
   rotary1Seq[0][0]= bin4[0]-'0';
   rotary1Seq[0][1]= bin4[1]-'0';
   rotary1Seq[0][2]= bin4[2]-'0';
@@ -219,7 +219,7 @@ int gen_val_state() {
     do{
         for (int i = 0; i <= 9; i++) {
           if (attempt[i]==0) {
-            next_state(rotary0Seq[a_state],i);
+            next_state(buttonSeq[a_state],i);
             state_cycle('a');
           } else if (attempt[i]==1) {
             next_state(rotary1Seq[b_state],i);
@@ -257,21 +257,21 @@ int var = 0;
 
 Serial.println(validation());
 Serial.println("Seg1");
-Serial.print(rotary0Seq[0][0]);
-Serial.print(rotary0Seq[0][1]);
-Serial.print(rotary0Seq[0][2]);
-Serial.print(rotary0Seq[0][3]);
-Serial.println(rotary0Seq[0][4]);
-Serial.print(rotary0Seq[1][0]);
-Serial.print(rotary0Seq[1][1]);
-Serial.print(rotary0Seq[1][2]);
-Serial.print(rotary0Seq[1][3]);
-Serial.println(rotary0Seq[1][4]);
-Serial.print(rotary0Seq[2][0]);
-Serial.print(rotary0Seq[2][1]);
-Serial.print(rotary0Seq[2][2]);
-Serial.print(rotary0Seq[2][3]);
-Serial.println(rotary0Seq[2][4]);
+Serial.print(buttonSeq[0][0]);
+Serial.print(buttonSeq[0][1]);
+Serial.print(buttonSeq[0][2]);
+Serial.print(buttonSeq[0][3]);
+Serial.println(buttonSeq[0][4]);
+Serial.print(buttonSeq[1][0]);
+Serial.print(buttonSeq[1][1]);
+Serial.print(buttonSeq[1][2]);
+Serial.print(buttonSeq[1][3]);
+Serial.println(buttonSeq[1][4]);
+Serial.print(buttonSeq[2][0]);
+Serial.print(buttonSeq[2][1]);
+Serial.print(buttonSeq[2][2]);
+Serial.print(buttonSeq[2][3]);
+Serial.println(buttonSeq[2][4]);
 Serial.println("Seg2");
 Serial.print(rotary1Seq[0][0]);
 Serial.print(rotary1Seq[0][1]);
@@ -318,6 +318,6 @@ Serial.println(attempt[9]);
 
 
 String command = start((rand() %30)+1);
-Serial.println(rotary0Seq[0][0]);
+Serial.println(buttonSeq[0][0]);
 delay(500);
 }
