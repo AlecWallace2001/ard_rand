@@ -1,5 +1,7 @@
 String start (int a)
 {
+  
+  Serial.println(a);
   String binary  ("");
     int mask = 1;
     for(int i = 0; i < 5; i++)
@@ -11,18 +13,28 @@ String start (int a)
      mask<<=1;
  }
  return binary;     //optional if not using ideone
- };
+ }
 
+int updateRand(){
+  long seed;
+  for (int i = 0; i <= 10; i++) {
+    seed = seed + (analogRead(0)*analogRead(0));
+  };
+  seed = seed*seed;
+  Serial.println(seed);
+  randomSeed(seed);
+  return 0;
+}
 
-  String bin1 = start((rand() %29)+1);
-  String bin2 = start((rand() %29)+1);
-  String bin3 = start((rand() %29)+1);
-  String bin4 = start((rand() %29)+1);
-  String bin5 = start((rand() %29)+1);
-  String bin6 = start((rand() %29)+1);
-  String bin7 = start((rand() %29)+1);
-  String bin8 = start((rand() %29)+1);
-  String bin9 = start((rand() %29)+1);
+  String bin1 = start(random(1,30));
+  String bin2 = start(random(1,30));
+  String bin3 = start(random(1,30));
+  String bin4 = start(random(1,30));
+  String bin5 = start(random(1,30));
+  String bin6 = start(random(1,30));
+  String bin7 = start(random(1,30));
+  String bin8 = start(random(1,30));
+  String bin9 = start(random(1,30));
 
   int attempt[10] ={0,0,0,0,0,0,0,0,0,0};
   int next_attempt[10] ={2,2,2,2,2,2,2,2,2,2};
@@ -76,15 +88,16 @@ String start (int a)
 
 int cycle ()
 {
-  bin1 = start((rand() %30)+1);
-  bin2 = start((rand() %30)+1);
-  bin3 = start((rand() %30)+1);
-  bin4 = start((rand() %30)+1);
-  bin5 = start((rand() %30)+1);
-  bin6 = start((rand() %30)+1);
-  bin7 = start((rand() %30)+1);
-  bin8 = start((rand() %30)+1);
-  bin9 = start((rand() %30)+1);
+  updateRand();
+  bin1 = start(random(1,30));
+  bin2 = start(random(1,30));
+  bin3 = start(random(1,30));
+  bin4 = start(random(1,30));
+  bin5 = start(random(1,30));
+  bin6 = start(random(1,30));
+  bin7 = start(random(1,30));
+  bin8 = start(random(1,30));
+  bin9 = start(random(1,30));
   rotary0Seq[0][0]= bin1[0]-'0';
   rotary0Seq[0][1]= bin1[1]-'0';
   rotary0Seq[0][2]= bin1[2]-'0';
@@ -134,7 +147,7 @@ int cycle ()
  };
 
 int iterate_attempt() {
-  int j_var = 9;
+  int j_var = 0;
   do {
     if (attempt[j_var]==2) {
       attempt[j_var]=0;
@@ -142,9 +155,9 @@ int iterate_attempt() {
       attempt[j_var] = 1 + attempt[j_var];
       return 0;
     }
-    j_var--;
+    j_var++;
   }
-  while (j_var >=0);
+  while (j_var <=9);
   return 0;
 }
 
@@ -171,18 +184,6 @@ int state_cycle(char var_state) {
 };
 
 int next_state(int* state, int loc) {
-    Serial.print("current: "); 
-    Serial.print(curr_state[0]); 
-    Serial.print(curr_state[1]); 
-    Serial.print(curr_state[2]); 
-    Serial.print(curr_state[3]); 
-    Serial.println(curr_state[4]); 
-    Serial.print("add: "); 
-    Serial.print(state[0]); 
-    Serial.print(state[1]); 
-    Serial.print(state[2]); 
-    Serial.print(state[3]); 
-    Serial.println(state[4]); 
   for (int i = 0; i <= 4; i++) {
     if (state[i] + curr_state[i] ==2) {
       curr_state[i] = 0;
@@ -193,7 +194,19 @@ int next_state(int* state, int loc) {
 }
 
 int validation(){
-  if(solution == curr_state) {
+    Serial.print("current: "); 
+    Serial.print(curr_state[0]); 
+    Serial.print(curr_state[1]); 
+    Serial.print(curr_state[2]); 
+    Serial.print(curr_state[3]); 
+    Serial.println(curr_state[4]); 
+    Serial.print("solution: "); 
+    Serial.print(solution[0]); 
+    Serial.print(solution[1]); 
+    Serial.print(solution[2]); 
+    Serial.print(solution[3]); 
+    Serial.println(solution[4]); 
+  if((solution[0] == curr_state[0])&&(solution[1] == curr_state[1])&&(solution[2] == curr_state[2])&&(solution[3] == curr_state[3])&&(solution[4] == curr_state[4])) {
     valid_sol = 1;
     return 1;
   } else {
@@ -216,7 +229,7 @@ int gen_val_state() {
             state_cycle('c');
           }
         }
-        
+        validation();
         Serial.println("");
         if (valid_sol==1){
           return 0;
@@ -234,6 +247,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(13, OUTPUT);
   Serial.println("Start");
+  cycle();
   gen_val_state();
 }
 
@@ -290,13 +304,17 @@ Serial.print(rotary2Seq[2][1]);
 Serial.print(rotary2Seq[2][2]);
 Serial.print(rotary2Seq[2][3]);
 Serial.println(rotary2Seq[2][4]);
-
-Serial.println("Solution P1");
-//Serial.println(solutionP1);
-Serial.println("Solution P1");
-//Serial.println(solutionP2);
 Serial.println("solution list");
-//Serial.println(attempt);
+Serial.print(attempt[0]);
+Serial.print(attempt[1]);
+Serial.print(attempt[2]);
+Serial.print(attempt[3]);
+Serial.print(attempt[4]);
+Serial.print(attempt[5]);
+Serial.print(attempt[6]);
+Serial.print(attempt[7]);
+Serial.print(attempt[8]);
+Serial.println(attempt[9]);
 
 
 String command = start((rand() %30)+1);
