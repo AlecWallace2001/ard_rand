@@ -38,6 +38,7 @@ int updateRand(){
   String bin8 = start(random(1,30));
   String bin9 = start(random(1,30));
 
+  int steps = 0;
   int attempt[10] ={0,0,0,0,0,0,0,0,0,0};
   int next_attempt[10] ={2,2,2,2,2,2,2,2,2,2};
   int solution[5] ={1,1,1,1,1};
@@ -147,6 +148,11 @@ int cycle ()
   rotary2Seq[2][2]= bin9[2]-'0';
   rotary2Seq[2][3]= bin9[3]-'0';
   rotary2Seq[2][4]= bin9[4]-'0';
+  curr_state[0] = 0;
+  curr_state[1] = 0;
+  curr_state[2] = 0;
+  curr_state[3] = 0;
+  curr_state[4] = 0;
  return 0;
  };
 
@@ -190,6 +196,17 @@ int state_cycle(char var_state) {
   }
 };
 
+int reset_state() {
+  curr_state[0] = 0;
+  curr_state[1] = 0;
+  curr_state[2] = 0;
+  curr_state[3] = 0;
+  curr_state[4] = 0;
+  a_state = 0;
+  b_state = 0;
+  c_state = 0;
+};
+
 int next_state(int* state, int loc) {
   //This handles the state of our lights, flipping between 1/0 based on what is in the button state
   //and the light state
@@ -202,7 +219,7 @@ int next_state(int* state, int loc) {
   }
 }
 
-int validation(){
+int validation(int step_num){
   //This just compares our currrent state with the anticipated solution. If all values in the current
   //light state match the solution state, then the valid solution flag is set.
     Serial.print("current: "); 
@@ -218,6 +235,9 @@ int validation(){
     Serial.print(solution[3]); 
     Serial.println(solution[4]); 
   if((solution[0] == curr_state[0])&&(solution[1] == curr_state[1])&&(solution[2] == curr_state[2])&&(solution[3] == curr_state[3])&&(solution[4] == curr_state[4])) {
+    if (valid_sol == 0) {
+          steps = step_num+1;
+    };
     valid_sol = 1;
     return 1;
   } else {
@@ -234,6 +254,7 @@ int gen_val_state() {
       //This cycles through the 59k combinations to find out if this combination of arrays contains a valid solution.
       //at the point that a valid solution is found, the function exits. If no solution is found with the current
       //array set, a fresh array set is generated and tested.
+        reset_state();
         for (int i = 0; i <= 9; i++) {
           //This cycles through the attempt array to test to see if it contains a valid combination
           //using the current arrays
@@ -247,8 +268,8 @@ int gen_val_state() {
             next_state(rotary2Seq[c_state],i);
             state_cycle('c');
           }
+          validation(i);
         }
-        validation();
         Serial.println("");
         if (valid_sol==1){
           return 0;
@@ -274,7 +295,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 int var = 0;
 
-Serial.println(validation());
+Serial.println(validation(steps));
 Serial.println("Seg1");
 Serial.print(buttonSeq[0][0]);
 Serial.print(buttonSeq[0][1]);
@@ -333,7 +354,9 @@ Serial.print(attempt[5]);
 Serial.print(attempt[6]);
 Serial.print(attempt[7]);
 Serial.print(attempt[8]);
-Serial.println(attempt[9]);
+Serial.print(attempt[9]);
+Serial.print(" ");
+Serial.println(steps);
 
 
 String command = start((rand() %30)+1);
