@@ -37,6 +37,7 @@ int updateRand(){
   String bin7 = start(random(1,30));
   String bin8 = start(random(1,30));
   String bin9 = start(random(1,30));
+  String prsteps = "";
 
   int steps = 0;
   int attempt[10] ={0,0,0,0,0,0,0,0,0,0};
@@ -94,6 +95,7 @@ int cycle ()
   //This function generates a new set by selecting a new seed, creating new binary values,
   //then assigning the new values to the array
   updateRand();
+  prsteps = "";
   bin1 = start(random(1,30));
   bin2 = start(random(1,30));
   bin3 = start(random(1,30));
@@ -194,9 +196,11 @@ int state_cycle(char var_state) {
       c_state = 1 + c_state;
     }
   }
+  return 0;
 };
 
 int reset_state() {
+  //Sets the current state and button states back to zero
   curr_state[0] = 0;
   curr_state[1] = 0;
   curr_state[2] = 0;
@@ -205,6 +209,7 @@ int reset_state() {
   a_state = 0;
   b_state = 0;
   c_state = 0;
+  return 0;
 };
 
 int next_state(int* state, int loc) {
@@ -217,23 +222,26 @@ int next_state(int* state, int loc) {
       curr_state[i] = state[i] + curr_state[i];
     }
   }
+  return 0;
 }
 
 int validation(int step_num){
   //This just compares our currrent state with the anticipated solution. If all values in the current
   //light state match the solution state, then the valid solution flag is set.
-    Serial.print("current: "); 
-    Serial.print(curr_state[0]); 
-    Serial.print(curr_state[1]); 
-    Serial.print(curr_state[2]); 
-    Serial.print(curr_state[3]); 
-    Serial.println(curr_state[4]); 
-    Serial.print("solution: "); 
-    Serial.print(solution[0]); 
-    Serial.print(solution[1]); 
-    Serial.print(solution[2]); 
-    Serial.print(solution[3]); 
-    Serial.println(solution[4]); 
+    prsteps = prsteps + "current: "; 
+    prsteps = prsteps + curr_state[0]; 
+    prsteps = prsteps + curr_state[1]; 
+    prsteps = prsteps + curr_state[2]; 
+    prsteps = prsteps + curr_state[3]; 
+    prsteps = prsteps + curr_state[4]; 
+    prsteps = prsteps + " ,"; 
+    prsteps = prsteps + "solution: "; 
+    prsteps = prsteps + solution[0]; 
+    prsteps = prsteps + solution[1]; 
+    prsteps = prsteps + solution[2]; 
+    prsteps = prsteps + solution[3]; 
+    prsteps = prsteps + solution[4];
+    prsteps = prsteps + " ,";  
   if((solution[0] == curr_state[0])&&(solution[1] == curr_state[1])&&(solution[2] == curr_state[2])&&(solution[3] == curr_state[3])&&(solution[4] == curr_state[4])) {
     if (valid_sol == 0) {
           steps = step_num+1;
@@ -244,6 +252,33 @@ int validation(int step_num){
     return 0;
   }
 };
+
+bool compare(){
+  //better comparison to iterate if a solution is not found.
+  bool next = true;
+  for (int i = 0;  i < 10; i++) {
+              if (attempt[i] != next_attempt[i]){
+                next = false;
+              };
+            };
+  return next;
+};
+
+int printsteps() {
+  //Updated print out for the solution proof
+String value1;
+String value2 = prsteps;
+// For loop which will separate the String in parts
+// and assign them the the variables we declare
+for (int i = 12; i < value2.length(); i++) {
+  if (value2.substring(i, i+1) == ",") {
+    Serial.println(value2.substring(0, i));
+    value2 = value2.substring(i+1);
+    i = 12;
+  }
+}
+return 0;
+}
 
 int gen_val_state() {
   //This is the main function. 
@@ -271,15 +306,22 @@ int gen_val_state() {
           validation(i);
         }
         Serial.println("");
-        if (valid_sol==1){
+        if ((valid_sol==1)&&(steps>=4)) {
+          printsteps();
           return 0;
-        }
+        } else if (((valid_sol==1) && (steps<4)) || ((valid_sol==1) && (steps>7))) {
+          for (int i = 0;  i < 10; i++) {
+              attempt[i] = next_attempt[i];
+            };
+        };
         iterate_attempt();
     }
-    while (attempt != next_attempt);
+    while (compare());
     cycle();
   }
   while (valid_sol == 0);
+  printsteps();
+  return 0;
 }
 
 void setup() {
