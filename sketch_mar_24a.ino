@@ -1,7 +1,6 @@
 String start (int a)
 {
   //This function converts a number between 1 and 31 to a binary string and returns it
-  Serial.println(a);
   String binary  ("");
     int mask = 1;
     for(int i = 0; i < 5; i++)
@@ -22,7 +21,6 @@ int updateRand(){
     seed = seed + (analogRead(0)*analogRead(0));
   };
   seed = seed*seed;
-  Serial.println(seed);
   randomSeed(seed);
   return 0;
 }
@@ -39,6 +37,8 @@ int updateRand(){
   String bin9 = start(random(1,30));
   String prsteps = "";
 
+  int print_cycle = 0;
+  int prev = 4;
   int steps = 0;
   int attempt[10] ={0,0,0,0,0,0,0,0,0,0};
   int next_attempt[10] ={2,2,2,2,2,2,2,2,2,2};
@@ -47,6 +47,9 @@ int updateRand(){
   int a_state = 0;
   int b_state = 0;
   int c_state = 0;
+  int usa = 0;
+  int usb = 0;
+  int usc = 0;
   int valid_sol = 0;
   int curr_state[5] ={0,0,0,0,0};
   int buttonSeq[][5] = {
@@ -63,30 +66,6 @@ int updateRand(){
     {bin7[0]-'0',bin7[1]-'0',bin7[2]-'0',bin7[3]-'0',bin7[4]-'0'},
     {bin8[0]-'0',bin8[1]-'0',bin8[2]-'0',bin8[3]-'0',bin8[4]-'0'},
     {bin9[0]-'0',bin9[1]-'0',bin9[2]-'0',bin9[3]-'0',bin9[4]-'0'}
-  };
-  int solutionP1[][5] = {
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-  };
-  int solutionP2[][5] = {
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
-    {0,0,0,0,0},
   };
 
 
@@ -105,56 +84,18 @@ int cycle ()
   bin7 = start(random(1,30));
   bin8 = start(random(1,30));
   bin9 = start(random(1,30));
-  buttonSeq[0][0]= bin1[0]-'0';
-  buttonSeq[0][1]= bin1[1]-'0';
-  buttonSeq[0][2]= bin1[2]-'0';
-  buttonSeq[0][3]= bin1[3]-'0';
-  buttonSeq[0][4]= bin1[4]-'0';
-  buttonSeq[1][0]= bin2[0]-'0';
-  buttonSeq[1][1]= bin2[1]-'0';
-  buttonSeq[1][2]= bin2[2]-'0';
-  buttonSeq[1][3]= bin2[3]-'0';
-  buttonSeq[1][4]= bin2[4]-'0';
-  buttonSeq[2][0]= bin3[0]-'0';
-  buttonSeq[2][1]= bin3[1]-'0';
-  buttonSeq[2][2]= bin3[2]-'0';
-  buttonSeq[2][3]= bin3[3]-'0';
-  buttonSeq[2][4]= bin3[4]-'0';
-  rotary1Seq[0][0]= bin4[0]-'0';
-  rotary1Seq[0][1]= bin4[1]-'0';
-  rotary1Seq[0][2]= bin4[2]-'0';
-  rotary1Seq[0][3]= bin4[3]-'0';
-  rotary1Seq[0][4]= bin4[4]-'0';
-  rotary1Seq[1][0]= bin5[0]-'0';
-  rotary1Seq[1][1]= bin5[1]-'0';
-  rotary1Seq[1][2]= bin5[2]-'0';
-  rotary1Seq[1][3]= bin5[3]-'0';
-  rotary1Seq[1][4]= bin5[4]-'0';
-  rotary1Seq[2][0]= bin6[0]-'0';
-  rotary1Seq[2][1]= bin6[1]-'0';
-  rotary1Seq[2][2]= bin6[2]-'0';
-  rotary1Seq[2][3]= bin6[3]-'0';
-  rotary1Seq[2][4]= bin6[4]-'0';
-  rotary2Seq[0][0]= bin7[0]-'0';
-  rotary2Seq[0][1]= bin7[1]-'0';
-  rotary2Seq[0][2]= bin7[2]-'0';
-  rotary2Seq[0][3]= bin7[3]-'0';
-  rotary2Seq[0][4]= bin7[4]-'0';
-  rotary2Seq[1][0]= bin8[0]-'0';
-  rotary2Seq[1][1]= bin8[1]-'0';
-  rotary2Seq[1][2]= bin8[2]-'0';
-  rotary2Seq[1][3]= bin8[3]-'0';
-  rotary2Seq[1][4]= bin8[4]-'0';
-  rotary2Seq[2][0]= bin9[0]-'0';
-  rotary2Seq[2][1]= bin9[1]-'0';
-  rotary2Seq[2][2]= bin9[2]-'0';
-  rotary2Seq[2][3]= bin9[3]-'0';
-  rotary2Seq[2][4]= bin9[4]-'0';
-  curr_state[0] = 0;
-  curr_state[1] = 0;
-  curr_state[2] = 0;
-  curr_state[3] = 0;
-  curr_state[4] = 0;
+  for (int i = 0; i <= 4; i++){
+    buttonSeq[0][i]= bin1[i]-'0';
+    buttonSeq[1][i]= bin2[i]-'0';
+    buttonSeq[2][i]= bin3[i]-'0';
+    rotary1Seq[0][i]= bin4[i]-'0';
+    rotary1Seq[1][i]= bin5[i]-'0';
+    rotary1Seq[2][i]= bin6[i]-'0';
+    rotary2Seq[0][i]= bin7[i]-'0';
+    rotary2Seq[1][i]= bin8[i]-'0';
+    rotary2Seq[2][i]= bin9[i]-'0';
+    curr_state[i] = 0;
+  };
  return 0;
  };
 
@@ -228,20 +169,20 @@ int next_state(int* state, int loc) {
 int validation(int step_num){
   //This just compares our currrent state with the anticipated solution. If all values in the current
   //light state match the solution state, then the valid solution flag is set.
-    prsteps = prsteps + "current: "; 
-    prsteps = prsteps + curr_state[0]; 
-    prsteps = prsteps + curr_state[1]; 
-    prsteps = prsteps + curr_state[2]; 
-    prsteps = prsteps + curr_state[3]; 
-    prsteps = prsteps + curr_state[4]; 
-    prsteps = prsteps + " ,"; 
-    prsteps = prsteps + "solution: "; 
-    prsteps = prsteps + solution[0]; 
-    prsteps = prsteps + solution[1]; 
-    prsteps = prsteps + solution[2]; 
-    prsteps = prsteps + solution[3]; 
-    prsteps = prsteps + solution[4];
-    prsteps = prsteps + " ,";  
+  prsteps = prsteps + "current: "; 
+  prsteps = prsteps + curr_state[0]; 
+  prsteps = prsteps + curr_state[1]; 
+  prsteps = prsteps + curr_state[2]; 
+  prsteps = prsteps + curr_state[3]; 
+  prsteps = prsteps + curr_state[4]; 
+  prsteps = prsteps + ";"; 
+  prsteps = prsteps + "solution: "; 
+  prsteps = prsteps + solution[0]; 
+  prsteps = prsteps + solution[1]; 
+  prsteps = prsteps + solution[2]; 
+  prsteps = prsteps + solution[3]; 
+  prsteps = prsteps + solution[4];
+  prsteps = prsteps + " ,"; 
   if((solution[0] == curr_state[0])&&(solution[1] == curr_state[1])&&(solution[2] == curr_state[2])&&(solution[3] == curr_state[3])&&(solution[4] == curr_state[4])) {
     if (valid_sol == 0) {
           steps = step_num+1;
@@ -280,6 +221,20 @@ for (int i = 12; i < value2.length(); i++) {
 return 0;
 }
 
+int no_dupe() {
+  prev = 4;
+  steps;
+  attempt;
+  for (int i = 0; i <= steps; i++) {
+    if (attempt[i] == prev) {
+      return 0;
+    } else {
+      prev = attempt[i];
+    }
+  }
+    return 1;
+}
+
 int gen_val_state() {
   //This is the main function. 
   do {
@@ -305,22 +260,25 @@ int gen_val_state() {
           }
           validation(i);
         }
-        Serial.println("");
-        if ((valid_sol==1)&&(steps>=4)) {
+        if ((valid_sol==1)&&(steps>=4)&&(steps<=7)&&(no_dupe()==1)) {
           printsteps();
-          return 0;
-        } else if (((valid_sol==1) && (steps<4)) || ((valid_sol==1) && (steps>7))) {
+          return 1;
+        } else if ((valid_sol==1) && (steps>7) && (no_dupe()==0)) {
+          //The solution was found in an invalid path. Skip further tests and generate a new combination
           for (int i = 0;  i < 10; i++) {
               attempt[i] = next_attempt[i];
             };
         };
+        valid_sol = 0;
         iterate_attempt();
     }
     while (compare());
-    cycle();
+    if ((valid_sol==0)||(no_dupe()==0)) {
+      valid_sol=0;
+      cycle();
+    };
   }
   while (valid_sol == 0);
-  printsteps();
   return 0;
 }
 
@@ -335,73 +293,38 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-int var = 0;
-
-Serial.println(validation(steps));
-Serial.println("Seg1");
-Serial.print(buttonSeq[0][0]);
-Serial.print(buttonSeq[0][1]);
-Serial.print(buttonSeq[0][2]);
-Serial.print(buttonSeq[0][3]);
-Serial.println(buttonSeq[0][4]);
-Serial.print(buttonSeq[1][0]);
-Serial.print(buttonSeq[1][1]);
-Serial.print(buttonSeq[1][2]);
-Serial.print(buttonSeq[1][3]);
-Serial.println(buttonSeq[1][4]);
-Serial.print(buttonSeq[2][0]);
-Serial.print(buttonSeq[2][1]);
-Serial.print(buttonSeq[2][2]);
-Serial.print(buttonSeq[2][3]);
-Serial.println(buttonSeq[2][4]);
-Serial.println("Seg2");
-Serial.print(rotary1Seq[0][0]);
-Serial.print(rotary1Seq[0][1]);
-Serial.print(rotary1Seq[0][2]);
-Serial.print(rotary1Seq[0][3]);
-Serial.println(rotary1Seq[0][4]);
-Serial.print(rotary1Seq[1][0]);
-Serial.print(rotary1Seq[1][1]);
-Serial.print(rotary1Seq[1][2]);
-Serial.print(rotary1Seq[1][3]);
-Serial.println(rotary1Seq[1][4]);
-Serial.print(rotary1Seq[2][0]);
-Serial.print(rotary1Seq[2][1]);
-Serial.print(rotary1Seq[2][2]);
-Serial.print(rotary1Seq[2][3]);
-Serial.println(rotary1Seq[2][4]);
-Serial.println("Seg3");
-Serial.print(rotary2Seq[0][0]);
-Serial.print(rotary2Seq[0][1]);
-Serial.print(rotary2Seq[0][2]);
-Serial.print(rotary2Seq[0][3]);
-Serial.println(rotary2Seq[0][4]);
-Serial.print(rotary2Seq[1][0]);
-Serial.print(rotary2Seq[1][1]);
-Serial.print(rotary2Seq[1][2]);
-Serial.print(rotary2Seq[1][3]);
-Serial.println(rotary2Seq[1][4]);
-Serial.print(rotary2Seq[2][0]);
-Serial.print(rotary2Seq[2][1]);
-Serial.print(rotary2Seq[2][2]);
-Serial.print(rotary2Seq[2][3]);
-Serial.println(rotary2Seq[2][4]);
-Serial.println("solution list");
-Serial.print(attempt[0]);
-Serial.print(attempt[1]);
-Serial.print(attempt[2]);
-Serial.print(attempt[3]);
-Serial.print(attempt[4]);
-Serial.print(attempt[5]);
-Serial.print(attempt[6]);
-Serial.print(attempt[7]);
-Serial.print(attempt[8]);
-Serial.print(attempt[9]);
-Serial.print(" ");
-Serial.println(steps);
 
 
-String command = start((rand() %30)+1);
-Serial.println(buttonSeq[0][0]);
+if (print_cycle==0) {
+  Serial.println(validation(steps));
+  Serial.println("Seg1");
+  for (int j = 0; j <= 2; j++){
+    for (int i = 0; i <= 3; i++){
+      Serial.print(buttonSeq[j][i]);
+    }
+    Serial.println(buttonSeq[j][4]);
+  };
+  Serial.println("Seg2");
+  for (int j = 0; j <= 2; j++){
+    for (int i = 0; i <= 3; i++){
+      Serial.print(rotary1Seq[j][i]);
+    }
+    Serial.println(rotary1Seq[j][4]);
+  };
+  Serial.println("Seg3");
+  for (int j = 0; j <= 2; j++){
+    for (int i = 0; i <= 3; i++){
+      Serial.print(rotary2Seq[j][i]);
+    }
+    Serial.println(rotary2Seq[j][4]);
+  };
+  Serial.println("solution list");
+  for (int i = 0; i <= 9; i++){
+    Serial.print(attempt[i]);
+  };
+  Serial.print(" ");
+  Serial.println(steps);
+};
+print_cycle++;
 delay(500);
 }
